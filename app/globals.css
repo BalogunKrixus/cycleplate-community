@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Loaded by link tag in the layout rather than next/font, so a build never
+     depends on reaching Google. */
+  :root {
+    --font-playfair: "Playfair Display";
+    --font-inter: "Inter";
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    @apply bg-cream text-ink font-sans;
+  }
+
+  /* Focus has to stay visible: this is a form heavy page and the design has no
+     borders to fall back on. */
+  :focus-visible {
+    outline: 2px solid #b23a4b;
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  h1, h2, h3 {
+    @apply font-serif;
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer components {
+  /* Inputs read as recessed rather than outlined, since the design has no
+     hard borders anywhere. */
+  .field {
+    @apply w-full rounded-2xl bg-surface px-4 py-3 text-[15px] text-ink shadow-inset
+           placeholder:text-faint focus:outline-none;
+  }
+
+  .field:focus {
+    box-shadow:
+      inset 0 1px 2px rgba(42, 31, 23, 0.06),
+      0 0 0 2px #b23a4b;
+  }
+}
+
+/* Horizontal chip rail. The scrollbar is hidden because the row is short and a
+   visible bar under seven chips looks like a mistake. */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
