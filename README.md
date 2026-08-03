@@ -81,6 +81,12 @@ policies are the thing that actually stops a member deleting someone else's
 post. The checks in `lib/actions.ts` exist so people get a readable sentence
 instead of a database error.
 
+**A handle can be changed once, and that is a trigger, not a check in the app.**
+Members hold the publishable key in their browser, so anything enforced only in
+`lib/actions.ts` can be stepped around with a direct API call. The trigger also
+makes `display_name_changed` unwritable by hand, so the allowance cannot be
+reset. An admin renaming somebody else does not spend that person's one change.
+
 **Email never reaches a table the feed can read.** `public.profiles` is world
 readable, because the feed shows display names and badges. Email lives in
 `auth.users`, and the only way to see one is `search_members`, a security

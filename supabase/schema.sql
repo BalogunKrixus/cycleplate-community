@@ -193,6 +193,35 @@ language sql stable security definer set search_path = public as $$
   );
 $$;
 
+-- --------------------------------------------------- one rename, enforced here
+-- A member may change their generated handle once. The check in the app is only
+-- there to produce a readable sentence: a member holds the publishable key in
+-- their browser, so without this trigger they could rename themselves as often
+-- as they liked, and set display_name_changed back to false while they were at
+-- it. The flag is never writable by hand, only as a consequence of a rename.
+create or replace function public.enforce_display_name_change() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  if new.display_name is distinct from old.display_name then
+    if public.is_admin() and auth.uid() is distinct from old.id then
+      -- an admin renaming somebody else does not spend that person's one change
+      new.display_name_changed := old.display_name_changed;
+    elsif old.display_name_changed then
+      raise exception 'display name has already been changed once'
+        using errcode = 'check_violation';
+    else
+      new.display_name_changed := true;
+    end if;
+  else
+    new.display_name_changed := old.display_name_changed;
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists profiles_name_guard on public.profiles;
+create trigger profiles_name_guard before update on public.profiles
+  for each row execute function public.enforce_display_name_change();
+
 -- ------------------------------------------------------------- member search
 -- Admins search members by display name or email. Email lives in auth.users and
 -- deliberately never reaches public.profiles, which the whole feed can read.
