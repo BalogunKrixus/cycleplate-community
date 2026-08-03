@@ -32,7 +32,14 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { display_name: generateDisplayName() } },
+        options: {
+          data: { display_name: generateDisplayName() },
+          /* Sent from the browser rather than left to the project default,
+             which is a single fixed Site URL. Every deployment has its own
+             hostname, so a fixed value mails people a link back to a different
+             build of the site, or to localhost. */
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
       });
       setBusy(false);
 

@@ -43,6 +43,19 @@ Supabase confirms addresses by email by default. Leaving that on is the right
 call for a community: it stops a stranger signing up as somebody else's address.
 Authentication, Providers, Email is where to change it.
 
+Two settings under Authentication, URL Configuration have to match the
+deployment or the confirmation email will send people nowhere useful:
+
+- **Site URL**: the deployed address, for example
+  `https://cycleplate-community.vercel.app`. It defaults to
+  `http://localhost:3000`, which is the wrong thing to mail to a real person.
+- **Redirect URLs**: add `https://cycleplate-community.vercel.app/**` and
+  `http://localhost:3000/**`. Sign up asks for a link back to whichever host
+  the browser is on, and Supabase refuses any address not on this list.
+
+The link lands on `/auth/callback`, which trades the one time code for a
+session and drops them into the feed already signed in.
+
 ## Deploying
 
 Import the repository at vercel.com/new. Set the same two environment variables
