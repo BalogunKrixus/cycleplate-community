@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { supabaseEnv } from "@/lib/supabase/env";
 import type { Profile } from "@/lib/types";
 
 type CookieToSet = { name: string; value: string; options?: CookieOptions };
@@ -8,10 +9,11 @@ type CookieToSet = { name: string; value: string; options?: CookieOptions };
    components can render the feed already knowing who is looking at it. */
 export async function createClient() {
   const cookieStore = await cookies();
+  const { url, key } = supabaseEnv();
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    key,
     {
       cookies: {
         getAll() {
