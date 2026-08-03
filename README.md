@@ -21,8 +21,10 @@ npm run dev
 2. SQL Editor, paste `supabase/schema.sql`, run it. This creates the tables,
    the triggers that keep counts accurate, and the row level security policies.
 3. Paste `supabase/seed.sql`, run it. This adds the seven starting categories.
-4. Project Settings, API. Copy the Project URL and the `anon` key into
-   `.env.local`.
+4. Project Settings, API Keys. Copy the Project URL and the publishable key
+   into `.env.local`. Newer projects call it "Publishable key" and it starts
+   with `sb_publishable_`; older ones call the same thing "anon public" and it
+   looks like a JWT. Both work.
 5. Sign up through the site, then make yourself an admin:
 
    ```sql
@@ -30,8 +32,10 @@ npm run dev
     where id = (select id from auth.users where email = 'you@example.com');
    ```
 
-The `service_role` key is not used by this app. It bypasses every policy, so it
-should never appear in a `NEXT_PUBLIC_` variable or in this repository.
+The secret key (`sb_secret_...`, previously `service_role`) is not used by this
+app. It bypasses every policy, so it should never appear in a `NEXT_PUBLIC_`
+variable or in this repository. If one is ever exposed, revoke it in Project
+Settings, API Keys.
 
 ### Email confirmation
 
